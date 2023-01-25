@@ -36,7 +36,7 @@
                         (metline-station wempark)))
 
 (struct links (from to time) #:mutable)
-(define forward (list (links (bkrline-station harrow) (bkrline-station kent-bkr) 3)
+(define list-links (list (links (bkrline-station harrow) (bkrline-station kent-bkr) 3)
                       (links (bkrline-station kent-bkr) (bkrline-station sken) 3)
                       (links (bkrline-station sken) (bkrline-station nwem) 3)
                       (links (bkrline-station nwem) (bkrline-station wemcen-bkr) 3)
@@ -47,18 +47,17 @@
                       (links (metline-station wemcen-met) (metline-station liverpool) 3)
                       (links (metline-station liverpool) (metline-station wempark) 5)
                       (links (metline-station wempark) (metline-station kent-met) 4)))
-
-(define backward (list (links (bkrline-station wemcen-bkr) (bkrline-station nwem) 3)
-                       (links (bkrline-station nwem) (bkrline-station sken) 3)
-                       (links (bkrline-station sken) (bkrline-station kent-bkr) 3)
-                       (links (bkrline-station kent-bkr) (bkrline-station harrow) 3)
-                       (links (metline-station kent-met) (metline-station wempark) 4)
-                       (links (metline-station wempark) (metline-station liverpool) 5)
-                       (links (metline-station liverpool) (metline-station wemcen-met) 3)
-                       (links (metline-station wemcen-met) (metline-station euston) 5)
-                       (links (metline-station euston) (metline-station baker) 4)
-                       (links (metline-station baker) (metline-station kent-met) 4)
-                       (links (metline-station kent-met) (metline-station npark) 4)))
+                      (links (bkrline-station wemcen-bkr) (bkrline-station nwem) 3)
+                      (links (bkrline-station nwem) (bkrline-station sken) 3)
+                      (links (bkrline-station sken) (bkrline-station kent-bkr) 3)
+                      (links (bkrline-station kent-bkr) (bkrline-station harrow) 3)
+                      (links (metline-station kent-met) (metline-station wempark) 4)
+                      (links (metline-station wempark) (metline-station liverpool) 5)
+                      (links (metline-station liverpool) (metline-station wemcen-met) 3)
+                      (links (metline-station wemcen-met) (metline-station euston) 5)
+                      (links (metline-station euston) (metline-station baker) 4)
+                      (links (metline-station baker) (metline-station kent-met) 4)
+                      (links (metline-station kent-met) (metline-station npark) 4)))
 
 
 (define choice (new choice%
