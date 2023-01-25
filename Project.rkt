@@ -46,7 +46,7 @@
                       (links (metline-station euston) (metline-station wemcen-met) 5)
                       (links (metline-station wemcen-met) (metline-station liverpool) 3)
                       (links (metline-station liverpool) (metline-station wempark) 5)
-                      (links (metline-station wempark) (metline-station kent-met) 4)))
+                      (links (metline-station wempark) (metline-station kent-met) 4)
                       (links (bkrline-station wemcen-bkr) (bkrline-station nwem) 3)
                       (links (bkrline-station nwem) (bkrline-station sken) 3)
                       (links (bkrline-station sken) (bkrline-station kent-bkr) 3)
