@@ -83,4 +83,12 @@
 (define text-field (new text-field%
                         [label "Route plan: "] [parent block2]))
 
+(define (travel-time From-Location To-Destination)
+  (define total-time 0)
+  (for ([link (list f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 b1 b2 b3 b4 b5 b6 b7 b8 b9)])
+    (when (or (and (eq? (links-from link) From-Location) (eq? (links-to link) To-Destination))
+            (and (eq? (links-from link) To-Destination) (eq? (links-to link) From-Location)))
+      (set! total-time (+ total-time (links-time link)))))
+  total-time)
+
 (send block2 show #t)
