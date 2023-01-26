@@ -35,38 +35,67 @@
                         (metline-station liverpool)
                         (metline-station wempark)))
 
-(struct links (from to time) #:mutable)
-(define list-links (list (links (bkrline-station harrow) (bkrline-station kent-bkr) 3)
-                      (links (bkrline-station kent-bkr) (bkrline-station sken) 3)
-                      (links (bkrline-station sken) (bkrline-station nwem) 3)
-                      (links (bkrline-station nwem) (bkrline-station wemcen-bkr) 3)
-                      (links (metline-station npark) (metline-station kent-met) 4)
-                      (links (metline-station kent-met) (metline-station baker) 4)
-                      (links (metline-station baker) (metline-station euston) 4)
-                      (links (metline-station euston) (metline-station wemcen-met) 5)
-                      (links (metline-station wemcen-met) (metline-station liverpool) 3)
-                      (links (metline-station liverpool) (metline-station wempark) 5)
-                      (links (metline-station wempark) (metline-station kent-met) 4)
-                      (links (bkrline-station wemcen-bkr) (bkrline-station nwem) 3)
-                      (links (bkrline-station nwem) (bkrline-station sken) 3)
-                      (links (bkrline-station sken) (bkrline-station kent-bkr) 3)
-                      (links (bkrline-station kent-bkr) (bkrline-station harrow) 3)
-                      (links (metline-station kent-met) (metline-station wempark) 4)
-                      (links (metline-station wempark) (metline-station liverpool) 5)
-                      (links (metline-station liverpool) (metline-station wemcen-met) 3)
-                      (links (metline-station wemcen-met) (metline-station euston) 5)
-                      (links (metline-station euston) (metline-station baker) 4)
-                      (links (metline-station baker) (metline-station kent-met) 4)
-                      (links (metline-station kent-met) (metline-station npark) 4)))
+(define links (list (list (bkrline-station harrow) (bkrline-station kent-bkr))
+                    (list (bkrline-station kent-bkr) (bkrline-station sken))
+                    (list (bkrline-station sken) (bkrline-station nwem))
+                    (list (bkrline-station nwem) (bkrline-station wemcen-bkr))
+                    (list (metline-station npark) (metline-station kent-met))
+                    (list (metline-station kent-met) (metline-station baker))
+                    (list (metline-station baker) (metline-station euston))
+                    (list (metline-station euston) (metline-station wemcen-met))
+                    (list (metline-station wemcen-met) (metline-station liverpool))
+                    (list (metline-station liverpool) (metline-station wempark))
+                    (list (metline-station wempark) (metline-station npark))
+                    (list (bkrline-station kent-bkr) (bkrline-station harrow))
+                    (list (bkrline-station sken) (bkrline-station kent-bkr))
+                    (list (bkrline-station nwem) (bkrline-station sken))
+                    (list (bkrline-station wemcen-bkr) (bkrline-station nwem))
+                    (list (metline-station kent-met) (metline-station npark))
+                    (list (metline-station baker) (metline-station kent-met))
+                    (list (metline-station euston) (metline-station baker))
+                    (list (metline-station wemcen-met) (metline-station euston))
+                    (list (metline-station liverpool) (metline-station wemcen-met))
+                    (list (metline-station wempark) (metline-station liverpool))
+                    (list (metline-station npark) (metline-station wempark))
+                    )
+  )
 
+(define route '())
 
-(define choice (new choice%
-                    [label "Location: "] [parent panel]
-                    [choices stations]))
+(define vertex-set (list->set (rest stations)))
 
-(define choice2 (new choice%
-                     [label "Destination: "] [parent panel]
-                      [choices stations]))
+(define edge (lambda (x graph)
+               (map (lambda (y)(first (rest y))) (filter (lambda (y) 
+                                                           (eq? (first y) x)) graph))))
+
+(define path (lambda (x y route graph vertex-set) 
+               (cond
+                 ((eq? x y) (reverse (cons x route)))
+                 ((not (set-member? vertex-set x)) "Something is wrong")
+                 ((not (set-member? vertex-set y)) "Something is wrong")
+                 (#t (ormap (lambda (z) (path z y (cons x route) graph (set-remove vertex-set x))) (edge x graph)))
+                 )
+               )
+  )
+
+(define plan (lambda (x y) ;; (plan "Harrow" "Liverpool Street")
+                    (path x y route links (list->set (flatten links)))))
+
+;(define c1 (new choice%
+                 ;   [label "Location: "]
+                 ;   [choices stations]
+                 ;   [parent panel]))
+
+;(define c2 (new choice%
+            ;         [label "Destination: "]
+                  ;   [choices stations]
+                  ;   [parent panel]))
+
+(define from (new text-field%
+                        [label "From: "] [parent block2]))
+
+(define to (new text-field%
+                        [label "To:     "] [parent block2]))
 
 (define faster (new check-box%
                        [label "Fastest route"] [parent block2]                      
@@ -76,8 +105,8 @@
 (define button (new button%
                     [parent block2]
                     [label "Get me there!"]
-                    [callback (lambda (choice choice2)
-                             (links-from b1) )]))
+                    [callback (lambda (o e)
+                                (send text-field set-value (plan (send from get-value) (send to get-value))))]))
 
 (define text-field (new text-field%
                         [label "Route plan: "] [parent block2]))
