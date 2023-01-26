@@ -62,8 +62,6 @@
 
 (define route '())
 
-(define vertex-set (list->set (rest stations)))
-
 (define edge (lambda (x graph)
                (map (lambda (y)(first (rest y))) (filter (lambda (y) 
                                                            (eq? (first y) x)) graph))))
