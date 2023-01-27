@@ -113,4 +113,3 @@
 
 
 (send block2 show #t)
-(trace edge)
