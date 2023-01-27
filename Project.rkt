@@ -2,7 +2,7 @@
 (require racket/gui/base)
 (define block2 (new frame%
                     [label  "Move-On"]
-                    [width 200] [height 200]))
+                    [width 400] [height 200]))
 (define panel (new horizontal-panel%
                    [parent block2]
                    [alignment '(center center)]))
