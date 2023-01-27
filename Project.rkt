@@ -1,5 +1,6 @@
 #lang racket
 (require racket/gui/base)
+(require racket/trace)
 (define block2 (new frame%
                     [label  "Move-On"]
                     [width 400] [height 200]))
@@ -39,6 +40,10 @@
                     (list (bkrline-station kent-bkr) (bkrline-station sken))
                     (list (bkrline-station sken) (bkrline-station nwem))
                     (list (bkrline-station nwem) (bkrline-station wemcen-bkr))
+                    (list (bkrline-station wemcen-bkr) (bkrline-station nwem))
+                    (list (bkrline-station nwem) (bkrline-station sken))
+                    (list (bkrline-station sken) (bkrline-station kent-bkr))
+                    (list (bkrline-station kent-bkr) (bkrline-station harrow))
                     (list (metline-station npark) (metline-station kent-met))
                     (list (metline-station kent-met) (metline-station baker))
                     (list (metline-station baker) (metline-station euston))
@@ -46,19 +51,15 @@
                     (list (metline-station wemcen-met) (metline-station liverpool))
                     (list (metline-station liverpool) (metline-station wempark))
                     (list (metline-station wempark) (metline-station npark))
-                    (list (bkrline-station kent-bkr) (bkrline-station harrow))
-                    (list (bkrline-station sken) (bkrline-station kent-bkr))
-                    (list (bkrline-station nwem) (bkrline-station sken))
-                    (list (bkrline-station wemcen-bkr) (bkrline-station nwem))
                     (list (metline-station kent-met) (metline-station npark))
-                    (list (metline-station baker) (metline-station kent-met))
-                    (list (metline-station euston) (metline-station baker))
-                    (list (metline-station wemcen-met) (metline-station euston))
-                    (list (metline-station liverpool) (metline-station wemcen-met))
-                    (list (metline-station wempark) (metline-station liverpool))
                     (list (metline-station npark) (metline-station wempark))
-                    )
-  )
+                    (list (metline-station wempark) (metline-station liverpool))
+                    (list (metline-station liverpool) (metline-station wemcen-met))
+                    (list (metline-station wemcen-met) (metline-station euston))
+                    (list (metline-station euston) (metline-station baker))
+                    (list (metline-station baker) (metline-station kent-met))
+                    (list (metline-station kent-met) (metline-station npark))
+                    ))
 
 (define route '())
 
@@ -104,7 +105,7 @@
                     [parent block2]
                     [label "Get me there!"]
                     [callback (lambda (o e)
-                                (send text-field set-value (plan (send from get-value) (send to get-value))))]))
+                (send text-field set-value (plan (send from get-value) (send to get-value))))]))
 
 (define text-field (new text-field%
                         [label "Route plan: "] [parent block2]))
@@ -112,3 +113,4 @@
 
 
 (send block2 show #t)
+(trace edge)
