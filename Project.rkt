@@ -152,6 +152,11 @@
                         [label "Route plan: "]  [parent block2]
                         [min-width 500]	 
                         [min-height 50]))
+                        
+(define clear (new button%
+                   [parent block2]
+                   [label "clear"]))
+                        
 
 (define (total-time station-list)
   (let loop ([stations station-list] [total-time 0])
