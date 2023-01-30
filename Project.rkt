@@ -155,8 +155,9 @@
                         
 (define clear (new button%
                    [parent block2]
-                   [label "clear"]))
-                        
+                   [label "clear"]
+                   [callback (lambda (o e)
+                             (send route-plan set-value " ")  )]))
 
 (define (total-time station-list)
   (let loop ([stations station-list] [total-time 0])
