@@ -149,8 +149,10 @@
                                         (#t (apply string-append (plan-string (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection))))))))]))
 
 (define route-plan (new text-field%
-                        [label "Route plan: "] [parent block2]
-                        ))
+                        [label "Route plan: "]  [parent block2]
+                        [min-width 500]	 
+                        [min-height 50]))
+
 
 
 
