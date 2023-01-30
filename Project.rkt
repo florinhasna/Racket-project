@@ -153,6 +153,128 @@
                         [min-width 500]	 
                         [min-height 50]))
 
+(define (total-time station-list)
+  (let loop ([stations station-list] [total-time 0])
+    (if (null? (cdr stations))
+        total-time
+        (loop (cdr stations) (+ total-time (time-between (car stations) (cadr stations)))))))
+
+(define (time-between station1 station2)
+  (cond
+    [(equal? station1 "Northwick Park (R)") (cond [(equal? station2 "Baker Street (A) (T)") 7]
+                                               [(equal? station2 "Kenton (R)") 4]
+                                               [(equal? station2 "Wembley Central (T)") 16]
+                                               [(equal? station2 "Euston Square (R)") 12]
+                                               [(equal? station2 "Liverpool Street") 13]
+                                               ((equal? station2 "Harrow (A) (T)") 7)
+                                               ((equal? station2 "South Kenton (A)") 7)
+                                               [(equal? station1 "North Wembley (R)") 10]
+                                               [(equal? station2 "Wembley Park (A) (T)") 8])] 
+    
+    [(equal? station1 "Baker Street (A) (T)") (cond [(equal? station2 "Northwick Park (R)") 8]
+                                               [(equal? station2 "Kenton (R)") 4]
+                                               [(equal? station2 "Wembley Central (T)") 9]
+                                               [(equal? station2 "Euston Square (R)") 4]
+                                               [(equal? station2 "Liverpool Street") 13]
+                                               ((equal? station2 "Harrow (A) (T)") 7)
+                                               ((equal? station2 "South Kenton (A)") 7)
+                                               [(equal? station1 "North Wembley (R)") 10]
+                                               [(equal? station2 "Wembley Park (A) (T)") 8])] 
+    
+    [(equal? station1 "Kenton (R)") (cond [(equal? station2 "Northwick Park (R)") 4]
+                                               [(equal? station2 "Wembley Central (T)") 9]
+                                               [(equal? station2 "Baker Street (A) (T)") 4]
+                                               [(equal? station2 "Euston Square (R)") 8]
+                                               [(equal? station2 "Liverpool Street") 9]
+                                               ((equal? station2 "Harrow (A) (T)") 3)
+                                               ((equal? station2 "South Kenton (A)") 3)
+                                               [(equal? station1 "North Wembley (R)") 6]
+                                               [(equal? station2 "Wembley Park (A) (T)") 4])] 
+    
+    [(equal? station1 "Wembley Central (T)") (cond [(equal? station2 "Northwick Park (R)") 16]
+                                               [(equal? station2 "Baker Street (A) (T)") 13]
+                                               [(equal? station2 "Euston Square (R)") 5]
+                                               [(equal? station2 "Liverpool Street") 3]
+                                               [(equal? station2 "Kenton (R)") 9]
+                                               ((equal? station2 "Harrow (A) (T)") 12)
+                                               ((equal? station2 "South Kenton (A)") 6)
+                                               [(equal? station1 "North Wembley (R)") 3]
+                                               [(equal? station2 "Wembley Park (A) (T)") 8])] 
+    
+    [(equal? station1 "Euston Square (R)") (cond [(equal? station2 "Northwick Park (R)") 12]
+                                               [(equal? station2 "Baker Street (A) (T)") 4]
+                                               [(equal? station2 "Liverpool Street") 13]
+                                               [(equal? station2 "Kenton (R)") 8]
+                                               ((equal? station2 "Harrow (A) (T)") 11)
+                                               ((equal? station2 "South Kenton (A)") 11)
+                                               [(equal? station1 "North Wembley (R)") 8]
+                                               [(equal? station2 "Wembley Central (T)") 5]
+                                               [(equal? station2 "Wembley Park (A) (T)") 13])] 
+    
+    
+    [(equal? station1 "Liverpool Street") (cond ((equal? station2 "Northwick Park (R)") 13)
+                                               [(equal? station2 "Baker Street (A) (T)") 13]
+                                               [(equal? station2 "Euston Square (R)") 12]
+                                               [(equal? station2 "Wembley Central (T)") 3]
+                                               [(equal? station2 "Kenton (R)") 9]
+                                               ((equal? station2 "Harrow (A) (T)") 12)
+                                               ((equal? station2 "South Kenton (A)") 12)
+                                               [(equal? station1 "North Wembley (R)") 15]
+                                               [(equal? station2 "Wembley Park (A) (T)") 5])] 
+                                            
+[(equal? station1 "Wembley Park (A) (T)") (cond ((equal? station2 "Northwick Park (R)") 8)
+                                               [(equal? station2 "Baker Street (A) (T)") 8]
+                                               [(equal? station2 "Liverpool Street") 5]
+                                               [(equal? station2 "Kenton (R)") 4]
+                                               ((equal? station2 "Harrow (A) (T)") 7)
+                                               ((equal? station2 "South Kenton (A)") 7)
+                                               [(equal? station1 "North Wembley (R)") 10]
+                                               [(equal? station2 "Wembley Central (T)") 8]
+                                               [(equal? station2 "Euston Square (R)") 12] 
+                                            
+ [(equal? station1 "Harrow (A) (T)") (cond ((equal? station2 "Kenton (R)") 3)
+                                               [(equal? station2 "Baker Street (A) (T)") 7]
+                                               [(equal? station2 "Liverpool Street") 12]
+                                               [(equal? station2 "Wembley Park (A) (T)") 7]
+                                               ((equal? station2 "South Kenton (A)") 6)
+                                               ((equal? station2 "Northwick Park (R)") 7)
+                                               [(equal? station1 "North Wembley (R)") 9]
+                                               [(equal? station2 "Wembley Central (T)") 12]
+                                               [(equal? station2 "Euston Square (R)") 11] 
+                                        
+                                        
+                                            
+ [(equal? station1 "South Kenton (A)") (cond ((equal? station2 "North Wembley (R)") 3)
+                                               [(equal? station2 "Baker Street (A) (T)") 7]
+                                               [(equal? station2 "Liverpool Street") 12]
+                                               [(equal? station2 "Kenton (R)") 3]
+                                               [(equal? station2 "Wembley Park (A) (T)") 7]
+                                               ((equal? station2 "Harrow (A) (T)") 6)
+                                               ((equal? station2 "Northwick Park (R)") 7)
+                                               [(equal? station2 "Wembley Central (T)") 6]
+                                               [(equal? station2 "Euston Square (R)") 11] 
+                                            
+ [(equal? station1 "North Wembley (R)") (cond ((equal? station2 "South Kenton (A)") 3)
+                                               [(equal? station2 "Baker Street (A) (T)") 10]
+                                               [(equal? station2 "Liverpool Street") 6]
+                                               [(equal? station2 "Kenton (R)") 6]
+                                               [(equal? station2 "Wembley Park (A) (T)") 12]
+                                               ((equal? station2 "Harrow (A) (T)") 9)
+                                               ((equal? station2 "Northwick Park (R)") 12)
+                                               [(equal? station2 "Wembley Central (T)") 3]
+                                               [(equal? station2 "Euston Square (R)") 14] 
+)])])])]))
+
+  
+
+
+
+
+
+
+(total-time '("Northwick Park (R)" "Baker Street (A) (T)" "Wembley Central (T)"))
+(total-time '("Northwick Park (R)" "Wembley Central (T)"))
+
 
 
 
