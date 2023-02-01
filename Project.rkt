@@ -151,7 +151,11 @@
 (define route-plan (new text-field%
                         [label "Route plan: "]  [parent block2]
                         [min-width 500]	 
-                        [min-height 50]))
+                        [min-height 20]))
+
+(define Time-route (new text-field%
+                  [label "Time travel:"] [parent block2]
+                  ))  
                         
 (define clear (new button%
                    [parent block2]
