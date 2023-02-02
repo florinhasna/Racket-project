@@ -134,10 +134,7 @@
                                          (send from set-selection (send to get-selection))
                                          (send to set-selection i)))]))
 
-(define faster (new check-box%
-                       [label "Fastest route"] [parent block2]                      
-                       [value #t]
-                       )) ;if value #f the box is not ticked
+
 
 (define get-me-there (new button%
                     [parent block2]
