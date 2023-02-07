@@ -9,24 +9,24 @@
                    [alignment '(center center)]))
 
 (struct metline (station))
-(define npark (metline "Northwick Park (R)"))
-(define kent-met (metline "Kenton (R)"))
-(define baker (metline "Baker Street (A) (T)"))
-(define euston (metline "Euston Square (R)"))
+(define npark (metline "Northwick Park (R)")) ;;created two structs, one for each line
+(define kent-met (metline "Kenton (R)"))      ;;(R) = ramp access
+(define baker (metline "Baker Street (A) (T)")) ;; (A) = accessible through lift
+(define euston (metline "Euston Square (R)"))   ;; (T) = the station has a toilet
 (define wemcen-met (metline "Wembley Central (T)"))
 (define liverpool (metline "Liverpool Street"))
 (define wempark (metline "Wembley Park (A) (T)"))
 
 (struct bkrline (station))
-(define harrow (bkrline "Harrow (A) (T)"))
+(define harrow (bkrline "Harrow (A) (T)"))     ;;throughout our code we call the elements of the structs to get the stations
 (define kent-bkr (bkrline "Kenton (R)"))
 (define sken (bkrline "South Kenton (A)"))
 (define nwem (bkrline "North Wembley (R)"))
 (define wemcen-bkr (bkrline "Wembley Central (T)"))
 
 (define stations (list "Select"
-                        (bkrline-station harrow)
-                        (bkrline-station kent-bkr)
+                        (bkrline-station harrow)           ;; defined a list with all stations
+                        (bkrline-station kent-bkr)         ;; that are later used in the choice object
                         (bkrline-station sken)
                         (bkrline-station nwem)
                         (bkrline-station wemcen-bkr)
@@ -35,13 +35,13 @@
                         (metline-station euston)
                         (metline-station liverpool)
                         (metline-station wempark)))
-                        
-(define bkr-graph (list (list (bkrline-station harrow) (bkrline-station kent-bkr))
+
+(define bkr-graph (list (list (bkrline-station harrow) (bkrline-station kent-bkr))  ;; defined a graph for bakerloo line
                     (list (bkrline-station kent-bkr) (bkrline-station sken))
                     (list (bkrline-station sken) (bkrline-station nwem)) 
                     (list (bkrline-station nwem) (bkrline-station wemcen-bkr))))
 
-(define met-graph (list (list (metline-station npark) (bkrline-station kent-bkr))
+(define met-graph (list (list (metline-station npark) (bkrline-station kent-bkr))   ;; defined another graph for metropolitan line
                     (list (bkrline-station kent-bkr) (metline-station baker))
                     (list (metline-station baker) (metline-station euston))
                     (list (metline-station euston) (bkrline-station wemcen-bkr))
@@ -49,23 +49,23 @@
                     (list (metline-station liverpool) (metline-station wempark))
                     (list (metline-station wempark) (metline-station npark))))
 
-(define empty-list '())
+(define empty-list '())    ;; we defined an empty list to easy use later in the functions
 
-(define reverse-line (lambda (a-graph empty-lst)
-                      (cond
-                        ((empty? a-graph) empty-lst)
+(define reverse-line (lambda (a-graph empty-lst)     ;;the function reverse-line is returning the backward links of a line
+                      (cond                          ;;we created this considering are the links are forward-backward
+                        ((empty? a-graph) empty-lst) ;; we can easily manipulate the graphs in this way
                         (#t (reverse-line (rest a-graph) (append (cons (reverse (first a-graph)) '()) empty-lst))))))
 
-(define bakerloo (append bkr-graph (reverse (reverse-line bkr-graph empty-list))))
-(define metropolitan (append met-graph (reverse (reverse-line met-graph empty-list))))
+(define bakerloo (append bkr-graph (reverse (reverse-line bkr-graph empty-list)))) ;;defined bakerloo graph forward-backward
+(define metropolitan (append met-graph (reverse (reverse-line met-graph empty-list)))) ;;define metropolitan graph forward-backward
 (define forward-backward (append bkr-graph met-graph (reverse (reverse-line bkr-graph empty-list)) (reverse (reverse-line met-graph empty-list))))
 
-(define edge (lambda (x graph)
-               (map (lambda (y)(first (rest y))) (filter (lambda (y) 
+(define edge (lambda (x graph)                                       ;;we use the edge function from the handout to get the connections
+               (map (lambda (y)(first (rest y))) (filter (lambda (y) ;;between stations
                                                            (eq? (first y) x)) graph))))
 
-(define path-check (lambda (x y graph vertex-set) 
-               (cond
+(define path-check (lambda (x y graph vertex-set)          ;; the path-check function, from the handout as well is used to check
+               (cond                                       ;; if there is a path between the "from" station and "to" station
                  ((eq? x y) #t)
                  ((not (set-member? vertex-set x)) #f)
                  ((not (set-member? vertex-set y)) #f)
@@ -74,43 +74,49 @@
                )
   )
 
-(define create-route (lambda (from to route graph vertex-set) 
-                       (cond 
-                         ((eq? from to) (reverse (cons from route)))
-                         ((not (set-member? vertex-set from)) #f) 
-                         ((not (set-member? vertex-set to)) #f)
+(define create-route (lambda (from to route graph vertex-set)         ;; the create-route function is the same as the path-check function
+                       (cond                                          ;; but instead of returning #t, will return the desired route
+                         ((eq? from to) (reverse (cons from route)))  ;; to this function we added another argument 'route' which is an empty-list
+                         ((not (set-member? vertex-set from)) #f)     ;; the function will append "from" station to the empty list everytime
+                         ((not (set-member? vertex-set to)) #f)       ;; if "from" is equivalent with "to" then it will cons it and reverse the list to have the right order
                          (#t (ormap (lambda (z) (create-route z to (cons from route) graph (set-remove vertex-set from))) (edge from graph)))
                          )
                        )
   )
 
 (define reachable (lambda (from to line) (path-check from to line (list->set (flatten line)))))
+;; the reachable function is defined to simplify the code in the next function, it is given three arguments and in calls on path-check function
+;; it does convert the given line from a list to a set and it flattens it to remove the pairs and duplicates
 (define plan1 (lambda (from to line) (create-route from to empty-list line (list->set (flatten line)))))
+;; just like the reachable function, we created plan1 to call on create-route function to simplify the code, it is given three arguments "from", "to"
+;; and "line", to the create-route function is given "empty-list" defined earlier and coverts the list to a set and flattens it 
 
-(define plan (lambda (from to)  
+(define plan (lambda (from to)   ;;the plan is taking only two arguments "from" station and "to destination"  
                  (cond      
-                   ((reachable from to bakerloo) (plan1 from to bakerloo))
-                   ((reachable from to metropolitan) 
+                   ((reachable from to bakerloo) (plan1 from to bakerloo)) ;; using reachable to identify a path, if yes will return it
+                   ((reachable from to metropolitan) ;; if not on bakerloo line, then will check the metropolitan line
                     (cond
                       ((< (length (plan1 from to metropolitan)) (length (plan1 from to (reverse metropolitan)))) (plan1 from to metropolitan))
+                      ;; it checks the length of the returned list by applying plan1 function against the length of the reverse
+                      ;; if the length of forward returned list is smaller, will return it, otherwise the condition below will return the reverse
+                      ;; this was neccessary because metropolitan line is a loop, so we want to make sure will take the fewer stations and will not go
+                      ;; all the way arround
                       (#t (plan1 from to (reverse metropolitan)))
                       ))
-                   ((reachable from to forward-backward)
-                    (cond
-                      ((= (length (plan1 from to forward-backward)) (length (plan1 from to (reverse forward-backward))))
-                       (append (plan1 from to forward-backward) (plan1 from to (reverse forward-backward))))
+                   ((reachable from to forward-backward)  ;; this condition checks the reachability between both connected lines,
+                     (cond                                ;;e.g leave from a metropolitan station and to a bakerloo one
                       ((< (length (plan1 from to forward-backward)) (length (plan1 from to (reverse forward-backward)))) (plan1 from to forward-backward)) 
                       (#t (plan1 from to (reverse forward-backward)))))
-                   (#t "Please select your leaving station and destination!")
+                   (#t "Please select your leaving station and destination!") ;; if the input of stations is incorrect, this string will be returned
                    )
                )
   )
 
-(define plan-string (lambda (from to)
-                      (for/list ([i (plan from to)])
+(define plan-string (lambda (from to)                          ;; the plan-string function will take the list of strings and append the string " -> " to every string
+                      (for/list ([i (plan from to)])          
                         (cond
-                          ((eq? i (last (plan from to))) i)
-                          (#t (string-append i " -> "))
+                          ((eq? i (last (plan from to))) i)    ;; when it gets to the last element, will return the iterator which will be the last string and it does
+                          (#t (string-append i " -> "))        ;; not append " -> " to it
                           )
                         )
                       )
