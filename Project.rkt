@@ -162,7 +162,8 @@
                    [parent block2]
                    [label "clear"]
                    [callback (lambda (o e)
-                             (send route-plan set-value " ")  )]))
+                             (send route-plan set-value " ")
+                             (send Time-route set-value " ")]))
 
 (define-struct station (name time-to-Northwick-Park time-to-Baker-Street time-to-Kenton time-to-Wembley-Central time-to-Euston-Square
                              time-to-Liverpool-Street time-to-Harrow time-to-South-Kenton time-to-North-Wembley time-to-Wembley-Park))
