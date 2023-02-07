@@ -132,21 +132,19 @@
                      [choices stations]
                      [parent panel]))
 
-(define invert-stations (new button%
-                             [label "Invert"]
-                             [parent block2]
-                             [callback (lambda (o e)
-                                         (let ([i (send from get-selection)])
+(define invert-stations (new button%                   ;; a button was implemented to switch the leaving station and the destination in case of returning
+                             [label "Reverse"]         ;; we called it "Reverse"
+                             [parent block2]           ;; we use the let construct to declare "i" a local variable to save the value of "from" choice
+                             [callback (lambda (o e)   ;; we set the selection of "from" choice with the value of "to" choice
+                                         (let ([i (send from get-selection)]) ;; and we set the value of "to" choice with the value of "from" saved in "i"
                                          (send from set-selection (send to get-selection))
                                          (send to set-selection i)))]))
 
-
-
-(define get-me-there (new button%
-                    [parent block2]
-                    [label "Get me there!"]
-                    [callback (lambda (o e)
-                                (send route-plan set-value
+(define get-me-there (new button%            ;; the button "Get me there!" calls the route-planning functions, first checks if the result is a single string
+                    [parent block2]          ;; which is the case where the input is incorrect described above and if it is not a string then will 
+                    [label "Get me there!"]  ;; will append all the strings returned into one and display the route into the "route-plan" text-field
+                    [callback (lambda (o e)  ;; as (send from get-selection) returns the position of the element in the list, we used list-ref to get
+                                (send route-plan set-value ;; the right input
                                       (cond
                                         ((string? (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection)))) (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection))))
                                         (#t (apply string-append (plan-string (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection))))))))]))
