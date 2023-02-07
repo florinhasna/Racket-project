@@ -1,4 +1,5 @@
 #lang racket
+
 (require racket/gui/base)
 (require racket/trace)
 (define block2 (new frame%
@@ -140,6 +141,16 @@
                                          (send from set-selection (send to get-selection))
                                          (send to set-selection i)))]))
 
+;(define get-me-there (new button%            ;; the button "Get me there!" calls the route-planning functions, first checks if the result is a single string
+                ;    [parent block2]          ;; which is the case where the input is incorrect described above and if it is not a string then will 
+                 ;   [label "Get me there!"]  ;; will append all the strings returned into one and display the route into the "route-plan" text-field
+                  ;  [callback (lambda (o e)  ;; as (send from get-selection) returns the position of the element in the list, we used list-ref to get
+                               ; (send route-plan set-value ;; the right input
+                                     ; (cond
+                                  ;      ((string? (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection)))) (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection))))
+
+;(#t (apply string-append (plan-string (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection))))))))]))
+
 (define get-me-there (new button%            ;; the button "Get me there!" calls the route-planning functions, first checks if the result is a single string
                     [parent block2]          ;; which is the case where the input is incorrect described above and if it is not a string then will 
                     [label "Get me there!"]  ;; will append all the strings returned into one and display the route into the "route-plan" text-field
@@ -147,11 +158,17 @@
                                 (send route-plan set-value ;; the right input
                                       (cond
                                         ((string? (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection)))) (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection))))
-                                        (#t (apply string-append (plan-string (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection))))))))]))
+                                        (#t (apply string-append (plan-string (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection)))))))
+                                 (send Time-route set-value
+                                   (string-append  (number->string (time-between (list (first (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection)))))
+                                                                                 (list (first (reverse (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection))))))))
+                                                   " minutes" )))]))
+  
+
 
 (define route-plan (new text-field%
                         [label "Route plan: "]  [parent block2]
-                        [min-width 500]	 
+                        [min-width 500] 
                         [min-height 20]))
 
 (define Time-route (new text-field%
@@ -162,13 +179,13 @@
                    [parent block2]
                    [label "clear"]
                    [callback (lambda (o e)
-                             (send route-plan set-value " ")
-                             (send Time-route set-value " ")]))
+                             (and (send route-plan set-value " ")
+                                  (send Time-route set-value " ")))]))
 
 (define-struct station (name time-to-Northwick-Park time-to-Baker-Street time-to-Kenton time-to-Wembley-Central time-to-Euston-Square
                              time-to-Liverpool-Street time-to-Harrow time-to-South-Kenton time-to-North-Wembley time-to-Wembley-Park))
 
-(define NP (make-station "Northwick Park (R)" 0 7 4 16 12 13 7 7 10 3))
+(define NP (make-station "Northwick Park (R)" 0 7 4 16 12 13 7 7 10 3)) 
 (define BS (make-station "Baker Street (A) (T)" 8 0 4 9 4 13 7 7 10 8))
 (define K (make-station "Kenton (R)" 4 4 0 9 8 9 3 3 6 4))
 (define WC (make-station "Wembley Central (T)" 16 9 9 0 5 3 9 12 6 8))
@@ -177,31 +194,130 @@
 (define H (make-station "Harrow (A) (T)" 7 7 3 9 11 13 7 0 3 7))
 (define SK (make-station "South Kenton (A)" 7 7 3 6 6 11 13 3 0 7))
 (define NW (make-station "North Wembley (R)" 10 10 6 3 3 8 8 3 7 0))
-(define WP (make-station "Wembley Park (A) (T)" 3 8 4 8 13 8 13 7 7 0))
+(define WP (make-station "Wembley Park (A) (T)" 3 8 4 8 13 8 13 7 7 0)) 
 
 (define (time-between station1 station2)
-  (cond [(equal? station1 NP) (station-time-to-Northwick-Park station2)]
-        [(equal? station1 BS) (station-time-to-Baker-Street station2)]
-        [(equal? station1 K) (station-time-to-Kenton station2)]
-        [(equal? station1 WC) (station-time-to-Wembley-Central station2)]
-        [(equal? station1 ES) (station-time-to-Euston-Square station2)]
-        [(equal? station1 L) (station-time-to-Liverpool-Street station2)]
-        [(equal? station1 H) (station-time-to-Harrow station2)]
-        [(equal? station1 SK) (station-time-to-South-Kenton station2)]
-        [(equal? station1 NW) (station-time-to-North-Wembley station2)]
-        [(equal? station1 WP) (station-time-to-Wembley-Park station2)]
-        [else 0]))
+  (cond [(equal? station1 '("Northwick Park (R)"))
+           (cond
+             ((equal? station2 '("Northwick Park (R)"))   (station-time-to-Northwick-Park NP))
+             ((equal? station2 '("Baker Street (A) (T)")) (station-time-to-Northwick-Park BS))
+             ((equal? station2 '("Kenton (R)"))           (station-time-to-Northwick-Park K))
+             ((equal? station2 '("Wembley Central (T)"))  (station-time-to-Northwick-Park WC))
+             ((equal? station2 '("Euston Square (R)"))    (station-time-to-Northwick-Park ES))
+             ((equal? station2 '("Liverpool Street"))     (station-time-to-Northwick-Park L))
+             ((equal? station2 '("Harrow (A) (T)"))       (station-time-to-Northwick-Park H))
+             ((equal? station2 '("South Kenton (A)"))     (station-time-to-Northwick-Park SK))
+             ((equal? station2 '( "North Wembley (R)"))   (station-time-to-Northwick-Park NW))
+             ((equal? station2  '("Wembley Park (A) (T)"))(station-time-to-Northwick-Park WP)))]
+        [(equal? station1 '("Baker Street (A) (T)")) 
+          (cond
+             ((equal? station2 '("Northwick Park (R)"))   (station-time-to-Baker-Street NP))
+             ((equal? station2 '("Baker Street (A) (T)")) (station-time-to-Baker-Street BS))
+             ((equal? station2 '("Kenton (R)"))           (station-time-to-Baker-Street K))
+             ((equal? station2 '("Wembley Central (T)"))  (station-time-to-Baker-Street WC))
+             ((equal? station2 '("Euston Square (R)"))    (station-time-to-Baker-Street ES))
+             ((equal? station2 '("Liverpool Street"))     (station-time-to-Baker-Street L))
+             ((equal? station2 '("Harrow (A) (T)"))       (station-time-to-Baker-Street H))
+             ((equal? station2 '("South Kenton (A)"))     (station-time-to-Baker-Street SK))
+             ((equal? station2 '( "North Wembley (R)"))   (station-time-to-Baker-Street NW))
+             ((equal? station2  '("Wembley Park (A) (T)"))(station-time-to-Baker-Street WP)))] 
+       [(equal? station1 '("Kenton (R)"))          
+          (cond
+             ((equal? station2 '("Northwick Park (R)"))    (station-time-to-Kenton NP))
+             ((equal? station2 '("Baker Street (A) (T)"))  (station-time-to-Kenton BS))
+             ((equal? station2 '("Kenton (R)"))            (station-time-to-Kenton K))
+             ((equal? station2 '("Wembley Central (T)"))   (station-time-to-Kenton WC))
+             ((equal? station2 '("Euston Square (R)"))     (station-time-to-Kenton ES))
+             ((equal? station2 '("Liverpool Street"))      (station-time-to-Kenton L))
+             ((equal? station2 '("Harrow (A) (T)"))        (station-time-to-Kenton H))
+             ((equal? station2 '("South Kenton (A)"))      (station-time-to-Kenton SK))
+             ((equal? station2 '( "North Wembley (R)"))    (station-time-to-Kenton NW))
+             ((equal? station2  '("Wembley Park (A) (T)")) (station-time-to-Kenton WP)))] 
+        [(equal? station1 '("Wembley Central (T)"))  
+            (cond
+             ((equal? station2 '("Northwick Park (R)"))   (station-time-to-Wembley-Central NP))
+             ((equal? station2 '("Baker Street (A) (T)")) (station-time-to-Wembley-Central BS))
+             ((equal? station2 '("Kenton (R)"))           (station-time-to-Wembley-Central K))
+             ((equal? station2 '("Wembley Central (T)"))  (station-time-to-Wembley-Central WC))
+             ((equal? station2 '("Euston Square (R)"))    (station-time-to-Wembley-Central ES))
+             ((equal? station2 '("Liverpool Street"))     (station-time-to-Wembley-Central L))
+             ((equal? station2 '("Harrow (A) (T)"))       (station-time-to-Wembley-Central H))
+             ((equal? station2 '("South Kenton (A)"))     (station-time-to-Wembley-Central SK))
+             ((equal? station2 '( "North Wembley (R)"))   (station-time-to-Wembley-Central NW))
+             ((equal? station2  '("Wembley Park (A) (T)"))(station-time-to-Wembley-Central WP)))] 
+       [(equal? station1 '("Euston Square (R)"))    
+           (cond
+             ((equal? station2 '("Northwick Park (R)"))   (station-time-to-Euston-Square NP))
+             ((equal? station2 '("Baker Street (A) (T)")) (station-time-to-Euston-Square BS))
+             ((equal? station2 '("Kenton (R)"))           (station-time-to-Euston-Square K))
+             ((equal? station2 '("Wembley Central (T)"))  (station-time-to-Euston-Square WC))
+             ((equal? station2 '("Euston Square (R)"))    (station-time-to-Euston-Square ES))
+             ((equal? station2 '("Liverpool Street"))     (station-time-to-Euston-Square L))
+             ((equal? station2 '("Harrow (A) (T)"))       (station-time-to-Euston-Square H))
+             ((equal? station2 '("South Kenton (A)"))     (station-time-to-Euston-Square SK))
+             ((equal? station2 '( "North Wembley (R)"))   (station-time-to-Euston-Square NW))
+             ((equal? station2  '("Wembley Park (A) (T)"))(station-time-to-Euston-Square WP)))]
+      [(equal? station1 '("Liverpool Street"))   
+        (cond
+             ((equal? station2 '("Northwick Park (R)"))   (station-time-to-Liverpool-Street NP))
+             ((equal? station2 '("Baker Street (A) (T)")) (station-time-to-Liverpool-Street BS))
+             ((equal? station2 '("Kenton (R)"))           (station-time-to-Liverpool-Street K))
+             ((equal? station2 '("Wembley Central (T)"))  (station-time-to-Liverpool-Street WC))
+             ((equal? station2 '("Euston Square (R)"))    (station-time-to-Liverpool-Street ES))
+             ((equal? station2 '("Liverpool Street"))     (station-time-to-Liverpool-Street L))
+             ((equal? station2 '("Harrow (A) (T)"))       (station-time-to-Liverpool-Street H))
+             ((equal? station2 '("South Kenton (A)"))     (station-time-to-Liverpool-Street SK))
+             ((equal? station2 '( "North Wembley (R)"))   (station-time-to-Liverpool-Street NW))
+             ((equal? station2  '("Wembley Park (A) (T)"))(station-time-to-Liverpool-Street WP)))]
+      [(equal? station1 '("Harrow (A) (T)") )      
+         (cond
+             ((equal? station2 '("Northwick Park (R)"))   (station-time-to-Harrow NP))
+             ((equal? station2 '("Baker Street (A) (T)")) (station-time-to-Harrow BS))
+             ((equal? station2 '("Kenton (R)"))           (station-time-to-Harrow K))
+             ((equal? station2 '("Wembley Central (T)"))  (station-time-to-Harrow WC))
+             ((equal? station2 '("Euston Square (R)"))    (station-time-to-Harrow ES))
+             ((equal? station2 '("Liverpool Street"))     (station-time-to-Harrow L))
+             ((equal? station2 '("Harrow (A) (T)"))       (station-time-to-Harrow H))
+             ((equal? station2 '("South Kenton (A)"))     (station-time-to-Harrow SK))
+             ((equal? station2 '( "North Wembley (R)"))   (station-time-to-Harrow NW))
+             ((equal? station2  '("Wembley Park (A) (T)"))(station-time-to-Harrow WP)))]
+     [(equal? station1 '("South Kenton (A)"))     
+           (cond
+             ((equal? station2 '("Northwick Park (R)"))   (station-time-to-South-Kenton NP))
+             ((equal? station2 '("Baker Street (A) (T)")) (station-time-to-South-Kenton BS))
+             ((equal? station2 '("Kenton (R)"))           (station-time-to-South-Kenton K))
+             ((equal? station2 '("Wembley Central (T)"))  (station-time-to-South-Kenton WC))
+             ((equal? station2 '("Euston Square (R)"))    (station-time-to-South-Kenton ES))
+             ((equal? station2 '("Liverpool Street"))     (station-time-to-South-Kenton L))
+             ((equal? station2 '("Harrow (A) (T)"))       (station-time-to-South-Kenton H))
+             ((equal? station2 '("South Kenton (A)"))     (station-time-to-South-Kenton SK))
+             ((equal? station2 '( "North Wembley (R)"))   (station-time-to-South-Kenton NW))
+             ((equal? station2  '("Wembley Park (A) (T)"))(station-time-to-South-Kenton WP)))]
+       [(equal? station1 '( "North Wembley (R)"))  
+           (cond
+             ((equal? station2 '("Northwick Park (R)"))   (station-time-to-North-Wembley NP))
+             ((equal? station2 '("Baker Street (A) (T)")) (station-time-to-North-Wembley BS))
+             ((equal? station2 '("Kenton (R)"))           (station-time-to-North-Wembley K))
+             ((equal? station2 '("Wembley Central (T)"))  (station-time-to-North-Wembley WC))
+             ((equal? station2 '("Euston Square (R)"))    (station-time-to-North-Wembley ES))
+             ((equal? station2 '("Liverpool Street"))     (station-time-to-North-Wembley L))
+             ((equal? station2 '("Harrow (A) (T)"))       (station-time-to-North-Wembley H))
+             ((equal? station2 '("South Kenton (A)"))     (station-time-to-North-Wembley SK))
+             ((equal? station2 '( "North Wembley (R)"))   (station-time-to-North-Wembley NW))
+             ((equal? station2  '("Wembley Park (A) (T)"))(station-time-to-North-Wembley WP)))] 
+        [(equal? station1 '("Wembley Park (A) (T)")) 
+             (cond
+             ((equal? station2 '("Northwick Park (R)"))   (station-time-to-Wembley-Park NP))
+             ((equal? station2 '("Baker Street (A) (T)")) (station-time-to-Wembley-Park BS))
+             ((equal? station2 '("Kenton (R)"))           (station-time-to-Wembley-Park K))
+             ((equal? station2 '("Wembley Central (T)"))  (station-time-to-Wembley-Park WC))
+             ((equal? station2 '("Euston Square (R)"))    (station-time-to-Wembley-Park ES))
+             ((equal? station2 '("Liverpool Street"))     (station-time-to-Wembley-Park L))
+             ((equal? station2 '("Harrow (A) (T)"))       (station-time-to-Wembley-Park H))
+             ((equal? station2 '("South Kenton (A)"))     (station-time-to-Wembley-Park SK))
+             ((equal? station2 '( "North Wembley (R)"))   (station-time-to-Wembley-Park NW))
+             ((equal? station2  '("Wembley Park (A) (T)"))(station-time-to-Wembley-Park WP)))]
+        [else 0])) 
 
-(define (total-time station-list)
-  (let loop ([stations station-list] [total-time 0]) 
-    (if (null? (cdr stations))
-        total-time
-        (loop (cdr stations) (+ total-time (time-between (car stations) (cadr stations)))))))
 
-(time-between H K)
-(time-between K H)
-(time-between L ES)
-
-
-
-(send block2 show #t) 
+(send block2 show #t)
