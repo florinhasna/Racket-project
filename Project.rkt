@@ -183,11 +183,11 @@
                                   (send Time-route set-value " ")))]))
 
 (define-struct station (name time-to-Northwick-Park time-to-Baker-Street time-to-Kenton time-to-Wembley-Central time-to-Euston-Square
-                             time-to-Liverpool-Street time-to-Harrow time-to-South-Kenton time-to-North-Wembley time-to-Wembley-Park))
+                             time-to-Liverpool-Street time-to-Harrow time-to-South-Kenton time-to-North-Wembley time-to-Wembley-Park)) ;Struct of station names
 
 (define NP (make-station "Northwick Park (R)" 0 7 4 16 12 13 7 7 10 3)) 
 (define BS (make-station "Baker Street (A) (T)" 8 0 4 9 4 13 7 7 10 8))
-(define K (make-station "Kenton (R)" 4 4 0 9 8 9 3 3 6 4))
+(define K (make-station "Kenton (R)" 4 4 0 9 8 9 3 3 6 4))                    ;;Times of which it would take a station to reach another station
 (define WC (make-station "Wembley Central (T)" 16 9 9 0 5 3 9 12 6 8))
 (define ES (make-station "Euston Square (R)" 12 4 4 5 0 13 8 11 8 13))
 (define L (make-station "Liverpool Street" 13 13 9 3 13 0 13 13 13 13))
@@ -202,7 +202,7 @@
              ((equal? station2 '("Northwick Park (R)"))   (station-time-to-Northwick-Park NP))
              ((equal? station2 '("Baker Street (A) (T)")) (station-time-to-Northwick-Park BS))
              ((equal? station2 '("Kenton (R)"))           (station-time-to-Northwick-Park K))
-             ((equal? station2 '("Wembley Central (T)"))  (station-time-to-Northwick-Park WC))
+             ((equal? station2 '("Wembley Central (T)"))  (station-time-to-Northwick-Park WC))   ;;Connects the first and second stations made at the very top and bottom
              ((equal? station2 '("Euston Square (R)"))    (station-time-to-Northwick-Park ES))
              ((equal? station2 '("Liverpool Street"))     (station-time-to-Northwick-Park L))
              ((equal? station2 '("Harrow (A) (T)"))       (station-time-to-Northwick-Park H))
