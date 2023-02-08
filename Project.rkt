@@ -141,30 +141,23 @@
                                          (send from set-selection (send to get-selection))
                                          (send to set-selection i)))]))
 
-;(define get-me-there (new button%            ;; the button "Get me there!" calls the route-planning functions, first checks if the result is a single string
-                ;    [parent block2]          ;; which is the case where the input is incorrect described above and if it is not a string then will 
-                 ;   [label "Get me there!"]  ;; will append all the strings returned into one and display the route into the "route-plan" text-field
-                  ;  [callback (lambda (o e)  ;; as (send from get-selection) returns the position of the element in the list, we used list-ref to get
-                               ; (send route-plan set-value ;; the right input
-                                     ; (cond
-                                  ;      ((string? (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection)))) (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection))))
-
-;(#t (apply string-append (plan-string (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection))))))))]))
-
 (define get-me-there (new button%            ;; the button "Get me there!" calls the route-planning functions, first checks if the result is a single string
                     [parent block2]          ;; which is the case where the input is incorrect described above and if it is not a string then will 
                     [label "Get me there!"]  ;; will append all the strings returned into one and display the route into the "route-plan" text-field
                     [callback (lambda (o e)  ;; as (send from get-selection) returns the position of the element in the list, we used list-ref to get
                                 (send route-plan set-value ;; the right input
                                       (cond
-                                        ((string? (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection)))) (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection))))
-                                        (#t (apply string-append (plan-string (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection)))))))
+                                        ((string? (plan (list-ref stations (send from get-selection))
+                                                        (list-ref stations (send to get-selection))))
+                                         (plan (list-ref stations (send from get-selection))
+                                               (list-ref stations (send to get-selection))))
+                                        (#t (apply string-append (plan-string (list-ref stations (send from get-selection))
+                                                                              (list-ref stations (send to get-selection)))))))
                                  (send Time-route set-value
-                                   (string-append  (number->string (time-between (list (first (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection)))))
-                                                                                 (list (first (reverse (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection))))))))
+                                   (string-append  (number->string (- (+ (time-between (list (first (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection)))))
+                                                                                 (list (first (reverse (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection)))))))
+                                                                      (length (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection))))) 1))
                                                    " minutes" )))]))
-  
-
 
 (define route-plan (new text-field%
                         [label "Route plan: "]  [parent block2]
@@ -177,17 +170,19 @@
                         
 (define clear (new button%
                    [parent block2]
-                   [label "clear"]
+                   [label "Clear"]
                    [callback (lambda (o e)
-                             (and (send route-plan set-value " ")
-                                  (send Time-route set-value " ")))]))
+                               (send route-plan set-value " ")
+                               (send Time-route set-value " ")
+                               (send from set-selection (list-ref stations 1))
+                               (send to set-selection (list-ref stations 1)))]))
 
 (define-struct station (name time-to-Northwick-Park time-to-Baker-Street time-to-Kenton time-to-Wembley-Central time-to-Euston-Square
-                             time-to-Liverpool-Street time-to-Harrow time-to-South-Kenton time-to-North-Wembley time-to-Wembley-Park)) ;Struct of station names
+                             time-to-Liverpool-Street time-to-Harrow time-to-South-Kenton time-to-North-Wembley time-to-Wembley-Park))
 
 (define NP (make-station "Northwick Park (R)" 0 7 4 16 12 13 7 7 10 3)) 
 (define BS (make-station "Baker Street (A) (T)" 8 0 4 9 4 13 7 7 10 8))
-(define K (make-station "Kenton (R)" 4 4 0 9 8 9 3 3 6 4))                    ;;Times of which it would take a station to reach another station
+(define K (make-station "Kenton (R)" 4 4 0 9 8 9 3 3 6 4))
 (define WC (make-station "Wembley Central (T)" 16 9 9 0 5 3 9 12 6 8))
 (define ES (make-station "Euston Square (R)" 12 4 4 5 0 13 8 11 8 13))
 (define L (make-station "Liverpool Street" 13 13 9 3 13 0 13 13 13 13))
@@ -202,7 +197,7 @@
              ((equal? station2 '("Northwick Park (R)"))   (station-time-to-Northwick-Park NP))
              ((equal? station2 '("Baker Street (A) (T)")) (station-time-to-Northwick-Park BS))
              ((equal? station2 '("Kenton (R)"))           (station-time-to-Northwick-Park K))
-             ((equal? station2 '("Wembley Central (T)"))  (station-time-to-Northwick-Park WC))   ;;Connects the first and second stations made at the very top and bottom
+             ((equal? station2 '("Wembley Central (T)"))  (station-time-to-Northwick-Park WC))
              ((equal? station2 '("Euston Square (R)"))    (station-time-to-Northwick-Park ES))
              ((equal? station2 '("Liverpool Street"))     (station-time-to-Northwick-Park L))
              ((equal? station2 '("Harrow (A) (T)"))       (station-time-to-Northwick-Park H))
@@ -318,6 +313,5 @@
              ((equal? station2 '( "North Wembley (R)"))   (station-time-to-Wembley-Park NW))
              ((equal? station2  '("Wembley Park (A) (T)"))(station-time-to-Wembley-Park WP)))]
         [else 0])) 
-
 
 (send block2 show #t)
