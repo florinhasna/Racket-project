@@ -177,8 +177,8 @@
                    [callback (lambda (o e)
                                (send route-plan set-value " ")
                                (send Time-route set-value " ")
-                               (send from set-selection (list-ref stations 1))
-                               (send to set-selection (list-ref stations 1)))]))
+                               (send from set-selection 0)
+                               (send to set-selection 0))]))
 
 (define-struct station (name time-to-Northwick-Park time-to-Baker-Street time-to-Kenton time-to-Wembley-Central time-to-Euston-Square
                              time-to-Liverpool-Street time-to-Harrow time-to-South-Kenton time-to-North-Wembley time-to-Wembley-Park))
