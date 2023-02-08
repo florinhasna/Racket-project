@@ -154,10 +154,13 @@
                                         (#t (apply string-append (plan-string (list-ref stations (send from get-selection))
                                                                               (list-ref stations (send to get-selection)))))))
                                  (send Time-route set-value
-                                   (string-append  (number->string (- (+ (time-between (list (first (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection)))))
+                                   (cond
+                                     ((string? (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection))))
+                                      " - ") 
+                                     (#t (string-append  (number->string (- (+ (time-between (list (first (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection)))))
                                                                                  (list (first (reverse (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection)))))))
                                                                       (length (plan (list-ref stations (send from get-selection)) (list-ref stations (send to get-selection))))) 1))
-                                                   " minutes" )))]))
+                                                   " minutes" )))))]))
 
 (define route-plan (new text-field%
                         [label "Route plan: "]  [parent block2]
