@@ -186,9 +186,9 @@
 (define WC (make-station "Wembley Central (T)" 16 9 9 0 5 3 9 12 6 8))
 (define ES (make-station "Euston Square (R)" 12 4 4 5 0 13 8 11 8 13))
 (define L (make-station "Liverpool Street" 13 13 9 3 13 0 13 13 13 13))
-(define H (make-station "Harrow (A) (T)" 7 7 3 9 11 13 0 7 3 7))
-(define SK (make-station "South Kenton (A)" 7 7 3 6 6 11 13 0 3 7))
-(define NW (make-station "North Wembley (R)" 10 10 6 3 3 8 8 3 0 7))
+(define H (make-station "Harrow (A) (T)" 7 7 3 9 11 13 0 6 9 7))
+(define SK (make-station "South Kenton (A)" 7 7 3 6 6 11 6 0 3 7))
+(define NW (make-station "North Wembley (R)" 10 10 6 3 3 8 9 3 0 7))
 (define WP (make-station "Wembley Park (A) (T)" 3 8 4 8 13 8 13 7 7 0)) 
 
 (define (time-between station1 station2)
