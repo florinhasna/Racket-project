@@ -180,10 +180,10 @@
                                (send from set-selection 0)
                                (send to set-selection 0))]))
 
-(define-struct station (name time-to-Northwick-Park time-to-Baker-Street time-to-Kenton time-to-Wembley-Central time-to-Euston-Square
-                             time-to-Liverpool-Street time-to-Harrow time-to-South-Kenton time-to-North-Wembley time-to-Wembley-Park))
+(define-struct station (name time-to-Northwick-Park time-to-Baker-Street time-to-Kenton time-to-Wembley-Central time-to-Euston-Square    ;; This is a struct of each station
+                             time-to-Liverpool-Street time-to-Harrow time-to-South-Kenton time-to-North-Wembley time-to-Wembley-Park))   ;; that the user could travel to.
 
-(define NP (make-station "Northwick Park (R)" 0 7 4 16 12 13 7 7 10 3)) 
+(define NP (make-station "Northwick Park (R)" 0 7 4 16 12 13 7 7 10 3))   ;; This here is each station and how long they would take to reach another station.
 (define BS (make-station "Baker Street (A) (T)" 8 0 4 9 4 13 7 7 10 8))
 (define K (make-station "Kenton (R)" 4 4 0 9 8 9 3 3 6 4))
 (define WC (make-station "Wembley Central (T)" 16 9 9 0 5 3 9 12 6 8))
@@ -197,8 +197,8 @@
 (define (time-between station1 station2)
   (cond [(equal? station1 '("Northwick Park (R)"))
            (cond
-             ((equal? station2 '("Northwick Park (R)"))   (station-time-to-Northwick-Park NP))
-             ((equal? station2 '("Baker Street (A) (T)")) (station-time-to-Northwick-Park BS))
+             ((equal? station2 '("Northwick Park (R)"))   (station-time-to-Northwick-Park NP))  ;; this code here is connect the the two different struct that we have made
+             ((equal? station2 '("Baker Street (A) (T)")) (station-time-to-Northwick-Park BS))  ;; the first struct we made was at the very top starting at line 12.
              ((equal? station2 '("Kenton (R)"))           (station-time-to-Northwick-Park K))
              ((equal? station2 '("Wembley Central (T)"))  (station-time-to-Northwick-Park WC))
              ((equal? station2 '("Euston Square (R)"))    (station-time-to-Northwick-Park ES))
