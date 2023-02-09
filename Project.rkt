@@ -197,7 +197,7 @@
 (define (time-between station1 station2)
   (cond [(equal? station1 '("Northwick Park (R)"))
            (cond
-             ((equal? station2 '("Northwick Park (R)"))   (station-time-to-Northwick-Park NP))  ;; this code here is connect the the two different struct that we have made
+             ((equal? station2 '("Northwick Park (R)"))   (station-time-to-Northwick-Park NP))  ;; this code here is connected the two different struct of the stations that we have made
              ((equal? station2 '("Baker Street (A) (T)")) (station-time-to-Northwick-Park BS))  ;; the first struct we made was at the very top starting at line 12.
              ((equal? station2 '("Kenton (R)"))           (station-time-to-Northwick-Park K))
              ((equal? station2 '("Wembley Central (T)"))  (station-time-to-Northwick-Park WC))
